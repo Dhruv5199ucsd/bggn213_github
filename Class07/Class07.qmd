@@ -1,0 +1,147 @@
+---
+title: "Class07"
+format: pdf
+author: "Dhruv"
+Date: "10/23/24"
+---
+
+KMEANS() is used for PCA analysis. To learn about this, we can create a test dataset for ourselves. Before anything, we should start with the `rnorm()` function. 
+```{r}
+hist(rnorm(1500))
+hist( rnorm(1500, mean = 3))
+hist( rnorm(1500, mean = -3))
+hist( rnorm(1500, mean = c(-3,3)))
+```
+```{r}
+n=30
+hist(c(rnorm(n, mean =3), rnorm(n, mean = -3)))
+x <- c(rnorm(n, mean =3), rnorm(n, mean = -3))
+#how to reverse x from y?
+y <- rev(x)
+y
+z <- cbind(x,y)
+plot(z)
+
+```
+##K-means clustering
+
+The function for k-means clustering is called `kmeans()`. Run `kmeans()` and assign two centers. 
+
+```{r}
+km <- kmeans(z, 2)
+```
+Q1. Print out the club membership vector (our main answer)
+```{r}
+km$centers
+km$cluster
+plot(z, col = "red")
+plot(z, col = c("red", "blue")) #Think about R as vectors. One vector is two colors against our input of n = 30. 
+
+```
+```{r}
+plot(z, col = km$cluster)
+
+```
+# plot with clustering result and add centers. 
+```{r}
+plot(z, col = km$cluster)
+points(km$centers, col = "blue", pch = 15, cex = 2)
+```
+
+>Q. Can you cluster our data in `z` into four clusters
+
+```{r}
+km_four <- kmeans(z, 4)
+```
+```{r}
+
+plot(z, col = km_four$cluster)
+points(km_four$centers, col = "blue", pch = 15, cex = 2)
+
+```
+```{r}
+kmeans(z,4)
+```
+
+##Hierarchical Clustering
+
+Function = `hclust()`
+For `hclust()` we first need a distance matrix from data. 
+
+```{r}
+d <- dist(z)
+hc <- hclust(d)
+plot(hc) #gives a plot where data is divided on two main arms (1-30 and 31-60)
+abline(h=10, col = "red")
+```
+To get main clustering results, can "cut" the tree and give height. to do this, use `cutree`. 
+
+```{r}
+grps <- cutree(hc, h=10)
+```
+```{r}
+plot(z, col = grps)
+```
+##Principle component analysis (PCA)
+
+Take original data, and choose path with most variance and assign it PC1. Then draw PC2 to capture more variance. 
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url)
+nrow(x) #Q.1 answer
+ncol(x)# Q.1 answer
+head(x) # Q.2 answer 
+rownames(x) <- x[,1]
+x <- x[,-1]
+head(x)
+```
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url,row.names = 1)
+nrow(x) #Q.1 answer
+ncol(x)# Q.1 answer
+
+dim(x)
+barplot(as.matrix(x), col=rainbow(nrow(x)))
+pairs(x, col=rainbow(10), pch=16)
+
+
+```
+## 17 variables is not close to how many dimensions we would normally look at. Using PCA
+
+Function for PCA in base R is `prcomp()`
+```{r}
+x
+t(x)
+pca <- prcomp(t(x))
+summary (pca)
+pca$rotation
+
+```
+
+What is inside our result from our object pca
+
+```{r}
+attributes(pca)
+```
+```{r}
+pca$x
+```
+To make our PC plot/Score plot/ordination plot/PC1/2 plot. 
+
+```{r}
+plot(pca$x[,1], pca$x[,2], col = x[,1])
+plot(pca$x[,1], pca$x[,2], col = c("black", "red", "blue", "darkgreen"), pch = 16, xlab = "PC1(67.4%)", ylab = "PC2 (29%)")
+
+```
+## add loadings plot before submitting this.
+
+```{r}
+## Lets focus on PC1 as it accounts for > 90% of variance 
+par(mar=c(10, 3, 0.35, 0))
+barplot( pca$rotation[,1], las=2 )
+barplot( pca$rotation[,4], las=2 )
+pca$rotation
+```
+

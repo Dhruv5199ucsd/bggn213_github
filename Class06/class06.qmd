@@ -1,0 +1,67 @@
+---
+title: "Class06"
+format: pdf
+author: Dhruv 
+---
+General format for R script: ADD <- FUNCTION(x,y){x+y}
+```{r}
+add <- function(x,y=1){x+y}
+```
+What would happen if we add x+y
+
+```{r}
+add(1,1)
+add(c(100,1,100),1)
+add(c(100,1,100),c(100,1,100))
+add(10)
+```
+```{r}
+add(1,1)
+```
+Make a function that generates a random nucleotide sequence of any length
+```{r}
+Nucleotides <- c("A","T","G","C")
+sequence <- sample(Nucleotides, 100, replace = TRUE)
+sequence
+```
+
+```{r}
+
+Generate_DNA <- function(length){
+  Nucleotides <- c("A","T","G","C")
+  sequence <- sample(Nucleotides,size = length, replace=TRUE)
+  return(sequence)
+}
+Generate_DNA(10)
+```
+This working snippet ROCKS! Now i can make it into an angelic function  
+```{r}
+library(bio3d)
+unique(bio3d::aa.table$aa1)[1:20]
+```
+
+```{r}
+amino_acids <- unique(bio3d::aa.table$aa1)[1:20]
+sample(amino_acids, size = 30, replace = TRUE)
+```
+
+```{r}
+Generate_AA <- function(length){
+  amino_acids <- unique(bio3d::aa.table$aa1)[1:20]
+  string <- sample(amino_acids, size = length, replace = TRUE)
+  string <- paste(string, collapse = "")
+  return(string)
+}
+Generate_AA(100)
+```
+I want to generate random sequences of length 6 - 12
+
+```{r}
+formatted<-sapply(6:12,Generate_AA)
+formatted
+```
+
+```{r}
+cat(paste(">id.",6:12,"\n", formatted, sep = ""),sep = "\n")
+```
+
