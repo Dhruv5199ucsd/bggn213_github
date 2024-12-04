@@ -1,0 +1,137 @@
+---
+title: "CLass10_q"
+format: html
+author: "Dhruv Khanduja"
+---
+
+# Complete question 1 to 3
+
+1.  Read CSV
+
+```{r}
+pdbstats <- read.csv("Class10Q1_3.csv")
+```
+
+The table is in characters (commas), we need it to be numerical. We can change this to numeric using `AS.NUMERIC()`
+
+```{r}
+x <- pdbstats$Total
+#as.numeric(x)
+gsub(',', '',x) #g stands for global
+```
+
+We see an error. We now know that the comma is the problem. How do we get rid of commas.
+
+```{r}
+convert_comma_numbers <- function(x) {
+  x <- gsub(',', '',x)
+  x<- as.numeric(x)
+  return(x)
+}
+```
+
+How to use this function. We can cbind new column, or apply the function too.
+
+```{r}
+convert_comma_numbers(pdbstats$Total)
+
+```
+
+Lets apply this now
+
+```{r}
+apply(pdbstats, 2, convert_comma_numbers)
+```
+
+Total structures in the database
+
+```{r}
+n.tot <- sum(convert_comma_numbers(pdbstats$Total))
+```
+
+Q1: What percentage of structures in the PDB are solved by X-Ray and Electron Microscopy.
+
+```{r}
+(colSums(apply(pdbstats, 2, convert_comma_numbers))/ n.tot)*100
+```
+
+A.1: Xray = 83.25%; EM = 10.234%
+
+Q2: What proportion of structures in the PDB are protein?
+
+A2. 86.3% of the structures are protein only. 97.8% include protein. 
+
+Can also read csv differently
+
+```{r}
+library(readr)
+pdb_stats <- read_csv("Class10Q1_3.csv")
+```
+
+##Using Mol\*
+
+How to add picture to my document in Markdown
+
+![This is my first image](1HSG.png)
+![Surface Representation should binding cleft](1HSG_2.png)
+
+![Showing A25 and water residue near ligand](1HSG_3.png)
+
+## Bio3D package for structural bioinformatics
+
+```{r}
+library(bio3d)
+pdb <- read.pdb("1HSG")
+pdb
+
+```
+Look at this in summary
+
+```{r}
+attributes(pdb)
+head(pdb$atom)
+#can also look at the sequence 
+pdbseq(pdb)[25]
+```
+> Q. How many amino acids are in this structure?
+
+```{r}
+length(pdbseq(pdb))
+```
+
+## Functional dynamics prediction
+
+Predicting functional motions of a single structure
+
+```{r}
+adk <- read.pdb("6s36")
+```
+From slides from Barry
+
+```{r}
+source("https://tinyurl.com/viewpdb")
+library(r3dmol)
+# shiny 
+view.pdb(pdb)
+view.pdb(pdb, backgroundColor = "white")
+
+```
+
+```{r}
+view.pdb(adk)
+```
+```{r}
+modes <- nma(adk)
+plot(modes)
+```
+All together
+
+```{r}
+adk <- read.pdb("6s36")
+modes <- nma(adk)
+mktrj(modes, file="adk.pdb") 
+mktrj(modes, pdb = adk, file="adk.pdb") #can give an additional argument
+```
+
+## **Part 4 (11/6/24)**
+

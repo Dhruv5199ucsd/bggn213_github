@@ -1,0 +1,75 @@
+---
+title: "Class11_Part 4_from_Class_10"
+format: pdf
+author: Dhruv 
+---
+
+## **Part 4 (11/6/24)**
+
+Comparative Structural Analysis 
+
+```{r}
+library(bio3d)
+```
+
+```{r}
+id <- "1ake_A"
+```
+
+```{r}
+aa <- get.seq(id)
+aa
+```
+```{r}
+b <- blast.pdb(aa)
+```
+```{r}
+head(b$hit.tbl)
+```
+```{r}
+hits <- plot(b)
+```
+
+What is inside "hits"
+
+```{r}
+attributes(hits)
+```
+What are the top hits form our blast results 
+
+```{r}
+hits$pdb.id
+```
+
+Download PDB files
+```{r}
+files <- get.pdb(hits$pdb.id, path = "pdbs", split = TRUE, gzip = TRUE)
+```
+
+I have now found and downloaded all ADK structures in the PDB database. Viewing them is difficult and needs to be alligned and then superimposed. 
+This is evident when we use MolViewer to load upp all the structures mentioned before. 
+
+Install BiocManager package from CRAN. use `BiocManager::install()` to install any package from bioconductor. 
+
+Align releated PDBs
+
+```{r}
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+pdbs
+```
+
+Now that we have our sequences aligned, we can now do a PCA
+
+```{r}
+pc <- pca(pdbs)
+plot(pc, pc.axes = c(1:2))
+```
+
+To examine what the PC is capturing, we can plot the loadings or make a movie (trajector) of moving along PC1
+
+```{r}
+mktrj(pc, pc=1, file="pc1.pdb")
+```
+
+
+
